@@ -92,6 +92,21 @@ Return ONLY valid JSON like:
     except Exception:
         # Safe fallback action if LLM gives invalid JSON
         return Action(order_A=50, order_B=30, order_C=50)
+    
+def smart_policy(obs):
+    target_stock = obs.demand_forecast * 2
+    gap = max(0, target_stock - obs.inventory)
+
+    # safer supplier preference
+    order_B = min(int(gap * 0.50), obs.suppliers["B"].max_capacity)
+    order_A = min(int(gap * 0.35), obs.suppliers["A"].max_capacity)
+    order_C = min(int(gap * 0.15), obs.suppliers["C"].max_capacity)
+
+    return Action(
+        order_A=max(0, order_A),
+        order_B=max(0, order_B),
+        order_C=max(0, order_C),
+    )
 
 
 def run_task(task_name: str, client: OpenAI) -> float:
@@ -119,7 +134,7 @@ def run_task(task_name: str, client: OpenAI) -> float:
             action_obj = None
 
             try:
-                action_obj = get_llm_action(client, obs)
+                action_obj = smart_policy(obs)
             except Exception as exc:
                 error = str(exc)
                 action_obj = Action(order_A=0, order_B=0, order_C=0)
