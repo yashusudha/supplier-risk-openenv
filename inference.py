@@ -10,8 +10,8 @@ from supplier_env.models import Action
 from supplier_env.grader import grade_episode
 
 # Required environment variables (Phase 2 rules)
-API_BASE_URL = os.environ["API_BASE_URL"]
-MODEL_NAME = os.environ["MODEL_NAME"]
+API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
 API_KEY = os.environ["API_KEY"]
 
 # Environment metadata
