@@ -14,11 +14,16 @@ def root():
     return {"status": "ok", "message": "Supplier Risk OpenEnv running"}
 
 
+# @app.post("/reset")
+# def reset(task: str = "easy"):
+#     global env
+#     env = SupplierRiskEnv(get_task(task), seed=42)
+#     obs = env.reset()
+#     return obs.model_dump()
+@app.get("/reset")
 @app.post("/reset")
 def reset(task: str = "easy"):
-    global env
-    env = SupplierRiskEnv(get_task(task), seed=42)
-    obs = env.reset()
+    obs = env.reset(task=task)
     return obs.model_dump()
 
 
