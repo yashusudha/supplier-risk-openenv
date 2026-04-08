@@ -23,8 +23,15 @@ def root():
 @app.get("/reset")
 @app.post("/reset")
 def reset(task: str = "easy"):
-    obs = env.reset(task=task)
-    return obs.model_dump()
+    env = SupplierRiskEnv(
+        task=get_task(task),
+        seed=42
+    )
+
+    obs = env.reset()
+
+    # support both pydantic v1/v2
+    return obs.model_dump() if hasattr(obs, "model_dump") else obs.dict()
 
 
 @app.post("/step")
