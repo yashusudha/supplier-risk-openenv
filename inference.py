@@ -94,20 +94,21 @@ Return ONLY valid JSON like:
         return Action(order_A=50, order_B=30, order_C=50)
     
 def smart_policy(obs):
-    target_stock = obs.demand_forecast * 2
+    risk_multiplier = 2.5 if obs.week > 10 else 2.0
+    target_stock = obs.demand_forecast * risk_multiplier
+
     gap = max(0, target_stock - obs.inventory)
 
-    # safer supplier preference
-    order_B = min(int(gap * 0.50), obs.suppliers["B"].max_capacity)
-    order_A = min(int(gap * 0.35), obs.suppliers["A"].max_capacity)
-    order_C = min(int(gap * 0.15), obs.suppliers["C"].max_capacity)
+    # prioritize safer supplier B more for hard task
+    order_B = min(int(gap * 0.60), obs.suppliers["B"].max_capacity)
+    order_A = min(int(gap * 0.30), obs.suppliers["A"].max_capacity)
+    order_C = min(int(gap * 0.10), obs.suppliers["C"].max_capacity)
 
     return Action(
         order_A=max(0, order_A),
         order_B=max(0, order_B),
         order_C=max(0, order_C),
     )
-
 
 def run_task(task_name: str, client: OpenAI) -> float:
     task = get_task(task_name)
