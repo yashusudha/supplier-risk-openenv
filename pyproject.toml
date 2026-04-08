@@ -1,0 +1,16 @@
+[project]
+name = "supplier-risk-openenv"
+version = "0.1.0"
+description = "OpenEnv for supplier risk management"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "pydantic",
+    "openai",
+    "pyyaml",
+    "openenv-core>=0.2.0"
+]
+
+[project.scripts]
+server = "server.app:main"
